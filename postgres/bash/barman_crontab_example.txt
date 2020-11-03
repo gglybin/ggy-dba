@@ -1,0 +1,10 @@
+>>> barman
+
+bash$ crontab -l
+
+##
+## PGDATA bin backup:
+##
+
+05  * * * * /var/lib/barman/dba/scripts/barman_cron.sh         >  /var/lib/barman/dba/logs/barman_cron.log  2>&1 &
+00 22 * * * /var/lib/barman/dba/scripts/barman_bkp.sh pgTEST   >  /var/lib/barman/dba/logs/barman_bkp.log   2>&1 &

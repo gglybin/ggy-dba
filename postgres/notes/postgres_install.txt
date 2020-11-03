@@ -1,0 +1,612 @@
+####################################
+Virtual Machine Info:
+####################################
+
+OS          = CentOS 7.5.1804
+Kernel      = 3.10.0-862.el7.x86_64
+CPU         = 4 (8 Threads)
+RAM         = 16 GB
+SWAP        = 16 GB
+HDD         = 30 GB (Linux LVM in use)
+Host name   = srv-postgres-db.test.com
+
+####################################
+Storage setup:
+####################################
+
+/postgres = 10 GB = PostgrSQL bin files location
+/pgdata   = 10 GB = Data files (PGDATA)
+/pgwal    = 10 GB = WAL files
+
+>>> root
+
+$ yum install -y lvm2
+$ ls -ltr /sys/class/scsi_host/host*/scan
+$ {
+echo "- - -" > /sys/class/scsi_host/host0/scan
+echo "- - -" > /sys/class/scsi_host/host1/scan
+echo "- - -" > /sys/class/scsi_host/host2/scan
+}
+
+$ lsblk | grep -i sdb
++++++
+sdb 8:16 0 33G 0 disk
++++++
+
+$ fdisk /dev/sdb
++++++
+n
+p
+<<<enter>>>
+<<<enter>>>
+t
+8e
+p
+w
++++++
+
+$ lsblk | grep -i sdb
++++++
+sdb 8:16 0 30G 0 disk
+└─sdb1 8:17 0 303G 0 part
++++++
+
+$ pvcreate /dev/sdb1
++++++
+Physical volume "/dev/sdb1" successfully created.
++++++
+
+$ vgcreate pgvg /dev/sdb1
++++++
+Volume group "oravg" successfully created
++++++
+
+$ {
+lvcreate --size 10G --name postgres pgvg
+lvcreate --size 10G --name pgdata pgvg
+lvcreate --size 10G --name pgwal pgvg
+}
+
+$ lsblk | grep -i -A3 sdb
++++++
+sdb 8:16 0 33G 0 disk
+└─sdb1 8:17 0 33G 0 part
+├─pgvg-postgres 253:0 0 10G 0 lvm
+├─pgvg-pgdata 253:1 0 10G 0 lvm
+└─pgvg-pgwal 253:2 0 10G 0 lvm
+
++++++
+
+$ {
+mkfs.ext4 /dev/pgvg/postgres
+mkfs.ext4 /dev/pgvg/pgdata
+mkfs.ext4 /dev/pgvg/pgwal
+}
+
+$ mkdir -p /postgres /pgdata /pgwal
+
+$ {
+mount /dev/pgvg/postgres /postgres
+mount /dev/pgvg/pgdata /pgdata
+mount /dev/pgvg/pgwal /pgwal
+}
+
+$ df -hT | grep -i pgvg
++++++
+Filesystem Type Size Used Avail Use% Mounted on
+/dev/mapper/pgvg-postgres ext4 9.8G 37M 9.2G 1% /postgres
+/dev/mapper/pgvg-pgdata ext4 9.8G 37M 9.2G 1% /pgdata
+/dev/mapper/pgvg-pgwal ext4 9.8G 37M 9.2G 1% /pgwal
++++++
+
+Add lines to “/etc/fstab”:
+
+$ cat /etc/fstab | grep -i -A15 "PostgreSQL Software"
++++++
+# PostgreSQL Software
+#
+# device - describes the block special device or remote filesystem to be mounted;
+# mountpoint - describes the mount directory;
+# fstype - file system type;
+# options - file system specific options;
+# dump - is checked by dump utility (usually set to 0 value);
+# fsck - sets the order for filesystem checks at boot time. For root device should be 1. For others 2, to disable 0.
+#
+# device mountpoint fstype options dump fsck
+/dev/mapper/pgvg-postgres /postgres ext4 defaults 0 2
+/dev/mapper/pgvg-pgdata /pgdata ext4 defaults 0 2
+/dev/mapper/pgvg-pgwal /pgwal ext4 defaults 0 2
++++++
+
+Swap partition:
+
+>>> root
+
+$ lsblk | grep -i sdc
++++++
+sdc 8:32 0 16G 0 disk
++++++
+
+$ pvcreate /dev/sdc
+$ vgcreate swapvg /dev/sdc
+$ lvcreate --size 16G --name pgswap swapvg
+
+Formatting the device with the SWAP format:
+
+$ mkswap /dev/swapvg/pgswap
++++++
+Setting up swapspace version 1, size = 16777212 KiB
+no label, UUID=389696f5-77dc-4361-97ab-c421d1e4a393
++++++
+Enable the extended logical volume swap:
+
+$ swapon -v /dev/swapvg/pgswap
++++++
+swapon /dev/swapvg/pgswap
+swapon: /dev/mapper/swapvg-pgswap: found swap signature: version 1, page-size 4, same byte order
+swapon: /dev/mapper/swapvg-pgswap: pagesize=4096, swapsize=17179869184, devsize=17179869184
++++++
+
+Disable default swap and enable new one by correcting “/etc/fstab”:
+
+$ cat /etc/fstab | grep -i swap
++++++
+#UUID=a0029b6b-2974-4dd3-93ce-d3ebdd682bed swap swap defaults 0 0
+/dev/mapper/swapvg-pgswap swap swap defaults 0 0
++++++
+
+Reboot the server (virtual machine):
+
+$ reboot
+
+Check results:
+
+$ cat /proc/swaps /// OR /// swapon -s
++++++
+Filename Type Size Used Priority
+/dev/dm-3 partition 16777212 0 -1
++++++
+
+####################################
+Server setup:
+####################################
+
+>>> root
+
+$ cat /etc/hosts
++++++
+127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+192.168.197.178 srv-postgres-db01.test.com srv-postgres-db01
++++++
+
+$ cat /etc/hostname
++++++
+srv-postgres-db01.test.com
++++++
+
+$ cat /etc/sysconfig/network
++++++
+NETWORKING=YES
+HOSTNAME=srv-postgres-db01.test.com
+NOZEROCONF=yes
++++++
+
+Install OS packages:
+
+$ {
+yum install -y bc
+yum install -y binutils
+yum install -y compat-libcap1
+yum install -y compat-libstdc++-33
+yum install -y dtrace-utils
+yum install -y elfutils-libelf
+yum install -y elfutils-libelf-devel
+yum install -y fontconfig-devel
+yum install -y glibc
+yum install -y glibc-devel
+yum install -y ksh
+yum install -y libaio
+yum install -y libaio-devel
+yum install -y libdtrace-ctf-devel
+yum install -y libXrender
+yum install -y libXrender-devel
+yum install -y libX11
+yum install -y libXau
+yum install -y libXi
+yum install -y libXtst
+yum install -y libgcc
+yum install -y librdmacm-devel
+yum install -y libstdc++
+yum install -y libstdc++-devel
+yum install -y libxcb
+yum install -y make
+yum install -y net-tools
+yum install -y nfs-utils
+yum install -y python
+yum install -y python-configshell
+yum install -y python-rtslib
+yum install -y python-six
+yum install -y targetcli
+yum install -y smartmontools
+yum install -y sysstat
+yum install -y unixODBC
+yum install -y dos2unix
+yum install -y telnet
+yum install -y make
+yum install -y binutils
+yum install -y gcc
+yum install -y libaio
+yum install -y glibc-common
+yum install -y libstdc++
+yum install -y sysstat
+yum install -y glibc
+yum install -y glibc-devel.i686
+yum install -y glibc-devel
+yum install -y libXtst
+yum install -y gcc-c++
+yum install -y readline-devel.i686
+yum install -y readline-devel.x86_64
+}
+
+Change SELINUX to permissive:
+
+>>> root
+
+$ cp /etc/selinux/config /etc/selinux/config_bkp
+$ grep -i "permissive" /etc/selinux/config
++++++
+SELINUX=permissive
++++++
+
+$ setenforce Permissive /// OR /// $ reboot
+Disable firewall:
+
+$ systemctl stop firewalld
+$ systemctl disable firewalld
+$ systemctl status firewalld
+Create user and group:
+
+>>> root
+
+$ {
+groupadd -g 26 postgres
+useradd -u 26 -g postgres postgres
+}
+cat /etc/passwd | grep -i postgres
++++++
+postgres:x:26:26:PostgreSQL Server:/home/postgres:/bin/bash
++++++
+
+$ passwd postgres
+
+Create directories:
+
+$ mkdir -p /home/postgres /postgres/12.2 /postgres/soft /pgdata/12.2/data /pgdata/12.2/logs /pgdata/12.2/tbs /pgwal/12.2
+
+####################################
+Postgres install:
+####################################
+
+>>> root
+
+$ cd /postgres/soft
+$ wget https://ftp.postgresql.org/pub/source/v12.2/postgresql-12.2.tar.gz
+$ tar -xvf postgresql-12.2.tar.gz
+$ cd postgresql-12.2
+$ ./configure --prefix=/postgres/12.2
+$ make
+---
+All of PostgreSQL successfully made. Ready to install.
+---
+
+$ make install 
+---
+PostgreSQL installation complete.
+---
+
+$ chown -R postgres:postgres /home/postgres /postgres /pgdata /pgwal
+
+>>> postgres
+
+$ cat /home/postgres/.bash_profile
++++++
+export PGBIN=/postgres/12.2/bin
+export PGDATA=/pgdata/12.2/data
+alias pg_ctl="/postgres/12.2/bin/pg_ctl"
+alias postmaster="/postgres/12.2/bin/postmaster"
+
+export TMP=/tmp
+export TMPDIR=$TMP
+export PATH=/usr/sbin:$PGBIN:$PATH
+export LD_LIBRARY_PATH=$PGBIN/../lib
+export PS1='\[\033[0;33m\]\u@\h\[\033[00m\] [\t] \w]\$ '
++++++
+
+$ cat /home/postgres/.psqlrc
++++++
+\set PROMPT1 '%n@%/%R%# '
+\set PROMPT2 '%n@%/%R%# '
+\set AUTOCOMMIT off
+\timing on
++++++
+
+$ $PGBIN/initdb -k -D $PGDATA
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are enabled.
+
+fixing permissions on existing directory /pgdata/12.2/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... America/Los_Angeles
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+initdb: warning: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+/postgres/12.2/bin/pg_ctl -D /pgdata/12.2/data -l logfile start
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+$ vi $PGDATA/pg_hba.conf
++++++
+...
+host all all 0.0.0.0/0 md5
++++++
+
+$ vi $PGDATA/postgresql.conf
++++++
+...
+include_if_exists = 'custom.conf'
++++++
+Here is custom.conf file content:
+
+$ vi $PGDATA/custom.conf 
++++++
+#####################################
+## Connecting
+#####################################
+
+ssl                       = 'off'
+port                      = '5432'
+listen_addresses          = '*'
+max_connections           = '100'
+max_prepared_transactions = '100'
+unix_socket_directories   = '/tmp'
+hba_file                  = '/pgdata/12.2/data/pg_hba.conf'
+ident_file                = '/pgdata/12.2/data/pg_ident.conf'
+
+#####################################
+## Memory
+#####################################
+
+shared_buffers       = '4GB'
+work_mem             = '16MB'
+maintenance_work_mem = '1GB'
+wal_buffers          = '16MB'
+
+#####################################
+## Disk
+#####################################
+
+fsync                        = 'on'
+synchronous_commit           = 'on'
+full_page_writes             = 'on'
+checkpoint_completion_target = '0.9'
+checkpoint_timeout           = '1800'
+effective_io_concurrency     = '300'
+
+#####################################
+## PITR / Replication
+#####################################
+
+# Default
+
+hot_standby                  = 'on'
+wal_keep_segments            = '8'
+wal_level                    = 'replica'
+wal_log_hints                = 'on'
+wal_receiver_status_interval = '1s'
+wal_sync_method              = 'fsync'
+max_replication_slots        = '10'
+max_standby_archive_delay    = '30s'
+max_standby_streaming_delay  = '30s'
+max_wal_senders              = '10'
+max_wal_size                 = '2993MB'
+max_worker_processes         = '8'
+min_wal_size                 = '2GB'
+
+# For local Barman backups
+#
+# archive_mode                    = on
+# archive_command                 = 'rsync -a %p barman@127.0.0.1:/backup/barman/pgTEST/incoming/%f'
+# archive_timeout                 = 1h
+# wal_level                       = archive
+
+#####################################
+## Planner
+#####################################
+
+effective_cache_size            = '12GB'
+random_page_cost                = '2'
+lock_timeout                    = '600000'   # 10 min
+default_statistics_target       = '100'
+max_locks_per_transaction       = '64'
+max_parallel_workers            = '4'
+max_parallel_workers_per_gather = '2'
+
+#####################################
+## Logging
+#####################################
+
+log_checkpoints            = 'True'
+log_connections            = 'True'
+log_destination            = 'stderr'
+log_directory              = '/pgdata/12.2/logs'
+log_disconnections         = 'True'
+log_filename               = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_line_prefix            = '%t [%p]: [%l-1] app=%a,user=%u,db=%d,client=%h '
+log_lock_waits             = 'on'
+log_min_duration_statement = '5000'
+log_min_error_statement    = 'DEBUG5'
+log_replication_commands   = 'on'
+log_rotation_age           = '1440'
+log_statement              = 'all'
+log_temp_files             = '0'
+log_truncate_on_rotation   = 'True'
+logging_collector          = 'True'
+
+#####################################
+## Autovacuum
+#####################################
+
+autovacuum                      = 'on'
+autovacuum_work_mem             = '498MB'
+autovacuum_vacuum_scale_factor  = '0.1'
+autovacuum_analyze_scale_factor = '0.3'
+
+#####################################
+## For Perf Extensions:
+#####################################
+
+shared_preload_libraries         = 'auto_explain,pg_stat_statements'
+pg_stat_statements.max           = '10000'
+pg_stat_statements.track         = 'all'
+pg_stat_statements.track_utility = 'on'
+pg_stat_statements.save          = 'off'
+track_io_timing                  = 'on'
+track_activity_query_size        = '32768'
+track_commit_timestamp           = 'off'
+log_min_duration_statement       = '5000'
+auto_explain.log_min_duration    = '5000'
+auto_explain.log_analyze         = 'on'
+
+#
+# One-Time Step after installation and instance start:
+# ----------------------------------------------------
+# psql> create extension pg_stat_statements;
+#
+# psql> load 'auto_explain';
+#
++++++
+
+Install extensions:
+
+$ cd /postgres/soft/postgresql-12.2/contrib/pg_stat_statements
+$ make
+$ make install
+
+$ cd /postgres/soft/postgresql-12.2/contrib/auto_explain
+$ make
+$ make install
+
+Start postgres:
+
+$ pg_ctl start
+Change “postgres” user password:
+
+$ psql
+postgres@postgres=# ALTER ROLE postgres WITH PASSWORD 'strongpwd';
+ALTER ROLE
+Time: 0.544 ms
+postgres@postgres=# COMMIT;
+COMMIT
+Time: 1.162 ms
+Test connection:
+
+$ psql -h ${HOSTNAME} -U postgres -W
+
+############################################################
+(OPTIONAL) Place WAL files on separate mount point:
+############################################################
+
+>>> postgres
+
+$ pg_ctl stop
+$ cp -rp $PGDATA/pg_wal /pgwal/12.2/
+$ rm -rf $PGDATA/pg_wal
+$ ln -s /pgwal/12.2/pg_wal $PGDATA/pg_wal
+$ pg_ctl start
+
+Test PostgreSQL cluster is installed and ready for experiments 🙂
+
+############################################################
+(OPTIONAL) Enable pg_stat_statements:
+############################################################
+
+To be able to see some statistics about queries running on your postgres database need to install pg_stat_statements extension and enable auto_explain module to log query execution plan too:
+
+$ psql 
+
+postgres@postgres=# create extension pg_stat_statements;
+
+postgres@postgres=# load 'auto_explain';
+
+############################################################
+(OPTIONAL) Test Load:
+############################################################
+
+Create benchmark database:
+
+>>> postgres
+
+$ psql
+
+postgres@postgres=# CREATE DATABASE benchmark;
+CREATE DATABASE
+Time: 2517.827 ms (00:02.518)
+
+Create tables for tests with scale factor = x50
+
+$ $PGBIN/pgbench -i -s 50 benchmark
+$ psql
+
+postgres@postgres=# \l+
+List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges   |  Size   | Tablespace |                Description
+-----------+----------+----------+-------------+-------------+-----------------------+---------+------------+--------------------------------------------
+ benchmark | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |                       | 756 MB  | pg_default |
+ postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |                       | 7953 kB | pg_default | default administrative connection database
+ template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +| 7809 kB | pg_default | unmodifiable empty database
+           |          |          |             |             | postgres=CTc/postgres |         |            |
+ template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +| 7809 kB | pg_default | default template for new databases
+           |          |          |             |             | postgres=CTc/postgres |         |            |
+(4 rows)
+
+Start load for 5 min's
+
+$ $PGBIN/pgbench -c 50 -j 2 -P 60 -T 300 benchmark
+++++++++++
+starting vacuum...end.
+progress: 60.0 s, 2225.2 tps, lat 21.947 ms stddev 53.513
+progress: 120.0 s, 2526.6 tps, lat 19.662 ms stddev 45.653
+progress: 180.0 s, 3580.0 tps, lat 13.867 ms stddev 30.615
+progress: 240.0 s, 3871.9 tps, lat 12.784 ms stddev 29.293
+progress: 300.0 s, 3320.5 tps, lat 14.965 ms stddev 33.205
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 50
+query mode: simple
+number of clients: 50
+number of threads: 2
+duration: 300 s
+number of transactions actually processed: 931504
+latency average = 15.939 ms
+latency stddev = 37.783 ms
+tps = 3103.337206 (including connections establishing)
+tps = 3103.779591 (excluding connections establishing)
+++++++++++

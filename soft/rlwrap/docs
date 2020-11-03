@@ -1,0 +1,4 @@
+Arrow Key Does Not Show Command History When Using SQL*Plus (Doc ID 567215.1)
+Bug 4598315 ENH: ADD A COMMAND LINE HISTORY TO SQL*PLUS
+SQL*Plus command line history completion (Doc ID 460591.1)
+https://blogs.oracle.com/ebrambilla/sqlplus-command-history-on-linux

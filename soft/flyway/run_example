@@ -1,0 +1,24 @@
+##
+## Oracle
+##
+
+$ /oracle/soft/flyway-5.0.7/flyway migrate -configFiles=/oracle/soft/migration_file.config
+ 
+##
+## Config example:
+##
+
+$ cat /oracle/soft/migration_file.config
+++++++++++++++++++++
+flyway.baselineOnMigrate=true
+flyway.baselineVersion=0
+flyway.user=APPS
+flyway.password=***
+flyway.url=jdbc:oracle:thin:@111.222.333.444:1521:oraclesid
+flyway.locations=filesystem:/oracle/soft/migration
+flyway.table=flyway_schema_history
+ 
+flyway.placeholders.tbsTables=APPS_T
+flyway.placeholders.tbsTablesSize=1G
+flyway.placeholders.tbsTablesDataFile=/oradata/ORCL/apps_t_01.dbf
+++++++++++++++++++++

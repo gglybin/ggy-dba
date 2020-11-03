@@ -1,0 +1,13 @@
+##
+## Oracle
+##
+ 
+$ java -jar "/oracle/soft/liquibase.jar" --classpath=/oracle/soft/oracle_jdbc.jar --username=APPS --password=*** --url=jdbc:oracle:thin:@111.222.333.444:1521:oraclesid --defaultSchemaName=APPS --changeLogFile=/oracle/soft/changelog.xml --logLevel=info update -Dtablespace_t=APPS_T -Dtablespace_i=APPS_I -Dtablespace_l=APPS_L -Donline_user=APPS -Ddefault_password=***
+ 
+##
+## PostgreSQL
+##
+ 
+$ java -jar "/home/postgres/soft/liquibase.jar" --classpath=/home/postgres/soft/postgresql_jdbc.jar --username=apps --password=*** --url=jdbc:postgresql://111.222.333.444:5432/pgdbname --changeLogFile=/home/postgres/soft/changelog.xml --logLevel=info --driver=org.postgresql.Driver update -Drole=RISKMETRICS_ROLE -Dtablespace_t=APPS_T -Dtablespace_i=APPS_I -Dtablespace_l=APPS_L -Ddefault_password=***
+ 
+Note: variables above could vary.

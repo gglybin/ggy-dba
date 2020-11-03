@@ -1,0 +1,12 @@
+------------------------
+-- Show Sequence Info --
+------------------------
+
+select * from pg_sequences where sequencename in ('your_seq_name');
+
+-------------------------------
+-- Set Sequence to new value --
+-------------------------------
+
+alter sequence your_seq_name restart with 1000;
+select nextval('your_seq_name');
