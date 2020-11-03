@@ -1,0 +1,63 @@
+##==============##
+##     DOCS     ##
+##==============##
+
+##
+## General
+##
+
+Oracle DataPump Quick Start (Doc ID 413965.1)
+Oracle Server - Export DataPump and Import DataPump FAQ (Doc ID 556636.1)
+Export/Import DataPump Parameter DIRECTORY - How to Specify a Directory (Doc ID 266875.1)
+
+##
+## Monitoring
+##
+
+How can we monitor a DataPump Job's Progress? (Doc ID 455720.1)
+
+##
+## UNDO tips
+##
+
+Options to decrease use Of UNDO during import (Doc ID 952892.1)
+Error ORA-30036 DataPump Import (IMPDP) Exhausts Undo Tablespace (Doc ID 727894.1)
+Import DataPump - How To Limit The Amount Of UNDO Generation of an IMPDP job ? (Doc ID 1670349.1)
+Run Out Of Space On UNDO Tablespace Using DataPump Import/Export (Doc ID 735366.1)
+
+##
+## Performance:
+##
+
+=> How to speed up the performance of Data Pump?
+
+Note 453895.1 - Checklist for Slow Performance of Export Data Pump (expdp) and Import DataPump (impdp)
+Note 365459.1 - Parallel Capabilities of Oracle Data Pump
+
+=> Which known issues may result in slower Data Pump performance?
+
+Note 453895.1 - Checklist for Slow Performance of Export Data Pump (expdp) and Import DataPump (impdp)
+Note 421441.1 - Datapump Import With dblink Going Slow With cursor_sharing Set to 'force'
+Note 429846.1 - Slow Data Pump with REMAP_SCHEMA and REMAP_TABLESPACE parameters
+
+##
+## Migration
+##
+
+How to Perform a Full Database Export Import During Upgrade, Migrate, Copy or Move of a Database (Doc ID 286775.1)
+
+##
+## Transportable Tablespaces (TTS):
+##
+
+Master Note for Transportable Tablespaces (TTS) - Common Questions and Issues [Document 1166564.1]
+Transportable Tablespace (TTS) Restrictions and Limitations: Details, Reference, and Version Where Applicable [Document 1454872.1]
+Best Practices for Using Transportable Tablespaces (TTS) [Document 1457876.1]
+10g Transportable Tablespaces Across Different Platforms [Document 243304.1]
+Upgrading a Database Using Transportable Tablespaces (TTS) [Document 1457743.1]
+
+##
+## Bugs:
+##
+
+IMPDP/EXPDP Doesn't work wih OS authentication or External Password Store (Doc ID 2560960.1)

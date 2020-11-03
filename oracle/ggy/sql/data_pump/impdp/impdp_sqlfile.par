@@ -1,0 +1,16 @@
+USERID='/ as sysdba'
+DIRECTORY=DATA_PUMP
+DUMPFILE=expdp_FILTERED_%U.dmp
+LOGFILE=impdp_FILTERED.log
+CLUSTER=NO
+
+#CONTENT=ALL              # It will be "ignored" and will work as CONTENT=METADATA_ONLY
+#CONTENT=DATA_ONLY        # Not working with SQLFILE option -- ORA-39208
+#CONTENT=METADATA_ONLY    # This is default for SQLFILE option in use.
+
+PARALLEL=2
+LOGTIME=ALL
+METRICS=YES
+
+# Import will not be performed, instead all DDL commands will be placed to file below.
+SQLFILE=impdp_SQLFILE.out
