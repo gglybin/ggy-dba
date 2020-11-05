@@ -64,7 +64,7 @@
 *.pga_aggregate_target=2G
 *.db_cache_size=12G                  # 60% of SGA
 *.log_buffer=256M
-*.use_large_pages='ONLY'
+*.use_large_pages='TRUE'
 
 ##
 ## PCI DSS:
