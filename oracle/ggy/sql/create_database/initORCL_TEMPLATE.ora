@@ -52,6 +52,7 @@
 *.fast_start_io_target=0             # Deprecated >= 10.1.0.4
 *.log_checkpoint_interval=0
 *.log_checkpoint_timeout=0
+*.log_checkpoints_to_alert=TRUE
 
 ##
 ## Memory:
