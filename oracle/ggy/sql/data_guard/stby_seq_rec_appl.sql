@@ -1,5 +1,5 @@
 --#-----------------------------------------------------------------------------------
---# File Name     : stb_seq_rec_appl.sql
+--# File Name     : stby_seq_rec_appl.sql
 --#
 --# Description   : Shows last received/applied sequence on standby.
 --#
