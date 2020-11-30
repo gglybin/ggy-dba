@@ -13,7 +13,7 @@
 *.core_dump_dest='/diag/19.0.0/diag/rdbms/orcl/ORCL/cdump'
 *.diagnostic_dest='/diag/19.0.0'
 *.dispatchers=''
-*.event='28401 trace name context forever, level 1','12633340 trace name context forever, level 5','10949 trace name context forever'
+#*.event='28401 trace name context forever, level 1','12633340 trace name context forever, level 5','10949 trace name context forever'
 *.job_queue_processes=8   # cpu_count / 2
 *.local_listener='LISTENER_ORCL'
 *.log_archive_dest_1='LOCATION=/arclogs/ORCL'
@@ -73,7 +73,7 @@
 ##
 
 *.audit_sys_operations=TRUE
-*.sec_case_sensitive_logon=TRUE      # Deprecated >= 12.1 - it is retained for backward compatibility only.  
+#*.sec_case_sensitive_logon=TRUE      # Deprecated >= 12.1 - it is retained for backward compatibility only.  
 
 ##
 ## Queries:
