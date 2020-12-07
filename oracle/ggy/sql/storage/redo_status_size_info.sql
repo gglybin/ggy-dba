@@ -28,7 +28,7 @@ select a.group#
 from   v$log a,
        v$logfile b
 where  a.group#=b.group#
-order  by 1, 3;
+order  by 1, 2, 4;
 
 Prompt ##
 Prompt ## Standby logs:
@@ -46,4 +46,4 @@ select a.group#
 from   v$standby_log a,
        v$logfile b
 where  a.group#=b.group#
-order  by 1, 3;
+order  by 1, 2, 4;
