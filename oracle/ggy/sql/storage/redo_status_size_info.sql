@@ -20,7 +20,7 @@ break on report
 compute sum label 'Total' of SIZE_MB on report
 
 select a.group#
-       ,a.thread#
+       ,a.thread#   -- useful in case of RAC environment
        ,b.type
        ,b.member
        ,a.status
@@ -38,7 +38,7 @@ break on report
 compute sum label 'Total' of SIZE_MB on report
 
 select a.group#
-       ,a.thread#
+       ,a.thread#   -- useful in case of RAC environment
        ,b.type
        ,b.member
        ,a.status
