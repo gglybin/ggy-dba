@@ -20,12 +20,13 @@ break on report
 compute sum label 'Total' of SIZE_MB on report
 
 select a.group#
+       ,a.thread#
        ,b.type
        ,b.member
        ,a.status
        ,(a.bytes / 1024 / 1024) SIZE_MB
-from   gv$log a,
-       gv$logfile b
+from   v$log a,
+       v$logfile b
 where  a.group#=b.group#
 order  by 1, 3;
 
@@ -37,11 +38,12 @@ break on report
 compute sum label 'Total' of SIZE_MB on report
 
 select a.group#
+       ,a.thread#
        ,b.type
        ,b.member
        ,a.status
        ,(a.bytes / 1024 / 1024) SIZE_MB
-from   gv$standby_log a,
-       gv$logfile b
+from   v$standby_log a,
+       v$logfile b
 where  a.group#=b.group#
 order  by 1, 3;
