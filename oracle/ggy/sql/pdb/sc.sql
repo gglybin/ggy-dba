@@ -8,6 +8,14 @@
 --#                SQL> @sc CDB$ROOT
 --#-----------------------------------------------------------------------------------
 
-SET VERIFY OFF;
+set verify off;
+set feedback off;
+set heading off;
 
-ALTER SESSION SET CONTAINER = &&1;
+alter session set container = &&1;
+
+select 'Connected to '||sys_context('userenv','con_name')||' container.' from dual;
+
+set verify on;
+set feedback on;
+set heading on;
