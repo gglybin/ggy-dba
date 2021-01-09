@@ -14,7 +14,10 @@ set heading off;
 
 alter session set container = &&1;
 
-select 'Connected to '||sys_context('userenv','con_name')||' container.' from dual;
+select '-------------------------------------' ||chr(10)||'Connected to '||sys_context('userenv','con_name')||' container.'||chr(10)||'-------------------------------------'
+from dual;
+
+-- def _CONNECT_IDENTIFIER = &&1
 
 set verify on;
 set feedback on;
