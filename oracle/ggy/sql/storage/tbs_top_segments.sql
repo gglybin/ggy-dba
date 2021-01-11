@@ -25,8 +25,9 @@ from   (select owner
                ,tablespace_name
                ,segment_type
                ,segment_name
-               ,round(bytes/(1024*1024),2) SIZE_MB
+               ,sum(round(bytes/(1024*1024),2)) SIZE_MB
         from   dba_segments
         where  tablespace_name='&&1'
-        order by bytes desc)
+        group by owner, tablespace_name, segment_type, segment_name
+        order by 5 desc)
 where rownum <=10;
