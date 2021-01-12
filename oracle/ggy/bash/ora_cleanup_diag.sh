@@ -190,7 +190,8 @@ if [[ ${diff} -le 0 ]]; then
 else
   message "INFO:  Going to remove obsolete script log files."
   #find "${log_dir}" -name "${exec_name%.*}*.log" -type f -printf "%p\n" | sort | head -n ${diff} | xargs rm
-  find "${log_dir}" -name "${exec_name%.*}*.log" -type f -printf "%AD %AT %p\n" | sort | head -n ${diff} | xargs rm 2> /dev/null
+  #find "${log_dir}" -name "${exec_name%.*}*.log" -type f -printf "%AD %AT %p\n" | sort | head -n ${diff} | xargs rm 2> /dev/null
+  find "${log_dir}" -name "${exec_name%.*}*.log" -type f -printf "%AD %AT %p\n" | sort -k1.8n -k1.1nr -k1 | head -n ${diff} | xargs rm 2> /dev/null
 fi
 }
 
