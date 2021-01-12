@@ -784,7 +784,8 @@ if [[ ${diff} -le 0 ]]; then
   message "INFO:  Script logs cleanup is not required. Keep threshold is set to ${keep_script_log_count} log file(s)."
 else
   message "INFO:  Going to remove obsolete script log files."
-  find "${log_dir}" -name "${exec_name%.*}*${2}_${3}*.log" -type f -printf "%AD %AT %p\n" | sort | head -n ${diff} | xargs rm 2> /dev/null
+  #find "${log_dir}" -name "${exec_name%.*}*${2}_${3}*.log" -type f -printf "%AD %AT %p\n" | sort | head -n ${diff} | xargs rm 2> /dev/null
+  find "${log_dir}" -name "${exec_name%.*}*${2}_${3}*.log" -type f -printf "%AD %AT %p\n" | sort -k1.8n -k1.1nr -k1 | head -n ${diff} | xargs rm 2> /dev/null
 fi
 }
 
