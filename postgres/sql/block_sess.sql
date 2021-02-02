@@ -1,7 +1,7 @@
 --#-----------------------------------------------------------------------------------
 --# File Name    : block_sess.sql
 --#
---# Description  : Shows info about blocking sessions in database.
+--# Description  : Shows info about blocking sessions in ALL databases.
 --#
 --# Call Syntax  : psql=# \i block_sess.sql
 --#
