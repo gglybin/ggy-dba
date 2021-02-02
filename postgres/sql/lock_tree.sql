@@ -1,3 +1,5 @@
+--# Description  : Shows blocking sessions tree in ALL databases.
+
 \echo ''
 
 WITH RECURSIVE l AS (
