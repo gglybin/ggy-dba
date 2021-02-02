@@ -6,6 +6,8 @@
 --# Call Syntax  : psql=# \i sess_info_all.sql
 --#-----------------------------------------------------------------------------------
 
+\echo ''
+
 select datname as database_name
        ,backend_start
        ,pid as process_id
