@@ -1,3 +1,5 @@
+\echo ''
+
 WITH RECURSIVE l AS (
   SELECT pid, locktype, granted,
     array_position(ARRAY['AccessShare','RowShare','RowExclusive','ShareUpdateExclusive','Share','ShareRowExclusive','Exclusive','AccessExclusive'], left(mode,-4)) m,
