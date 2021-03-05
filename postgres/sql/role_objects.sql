@@ -19,7 +19,7 @@ select
               when relkind = 'p' then 'Partitioned table'
               when relkind = 'v' then 'View'
               else 'Unknown ...'
-        end "Object Type",
+        end as "Object Type",
         count(*)  as "Count"
 from
         pg_class
