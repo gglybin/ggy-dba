@@ -50,3 +50,16 @@ else
    message "CLEANUP => Done."
 fi
 exit 0
+
+
+#
+# Backup:
+# -------
+#
+#  pg_dump -Z1 -Fc db_name > /backup/db_name_<date>.dump
+#
+# Restore:
+# --------
+#
+#  pg_resotre -j 2 -d db_name /backup/db_name_<date>.dump
+#

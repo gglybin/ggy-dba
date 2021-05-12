@@ -1,1 +1,0 @@
-@cc cdb$root
