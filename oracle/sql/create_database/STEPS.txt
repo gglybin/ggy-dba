@@ -1,0 +1,44 @@
+##
+## High level action plan:
+##
+
+1) Prepare server/os/oracle home:
+
+     Ansible playbook "oracle_19c_install" can be used.
+     Roles:
+        - db_storage_setup
+        - db_server_setup
+        - db_software_setup
+
+2) Prepare parameter file:
+
+     Template "initORCL_TEMPLATE.ora" can be used/adjusted.
+   
+3) Create database manually or automatically:
+
+     Manual = script "create_database.sql" can be used.
+     Auto   = ansible role "db_create_instance" can be used.
+   
+4) (OPTIONAL) REDO size corrections:
+
+     Change Redo Log files size/location if required.
+
+4) (OPTIONAL) UNDO size corrections:
+
+     Change UNDO tablespace datafiles if required. Default is 2GB no-autoextend.
+
+5) (OPTIONAL) TEMP size corrections:
+
+     Change TEMP tablespace datafiles if required. Default is 2GB no-autoextend.
+
+6) (OPTIONAL) AWR settings corrections:
+
+     SQL> exec dbms_workload_repository.modify_baseline_window_size(window_size => 7);
+     SQL> exec dbms_workload_repository.modify_snapshot_settings(interval => 15, retention => 10080);   <<<<<<<<<<<<<<< 15 min Interval; 7 Days retention (10080 min)
+
+7) (OPTIONAL) Crontab setup:
+
+     - Script "ora_cleanup_diag.sh" can be used to cleaup old oracle diag files.
+     - Script "rman_backup.sh" can be used for database backup.
+   
+8) (OPTIONAL) Add to Monitoring.

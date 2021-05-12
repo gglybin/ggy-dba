@@ -1,0 +1,95 @@
+##
+## General:
+##
+
+Where to Find Information About Performance Related Features (Doc ID 1361401.1)
+Best Practices: Proactively Avoiding Database and Query Performance Issues (Doc ID 1482811.1)
+The COE Performance Method (Doc ID 190124.1)
+Which Optimizer is Being Used ? (Doc ID 66484.1)
+
+##
+## AWR:
+##
+
+Automatic Workload Repository (AWR) Reports - Main Information Sources (Doc ID 1363422.1)
+Performance Diagnosis with Automatic Workload Repository (AWR) (Doc ID 1674086.1)
+How to Use AWR Reports to Diagnose Database Performance Issues (Doc ID 1359094.1)
+AWR Report Interpretation Checklist for Diagnosing Database Performance Issues (Doc ID 1628089.1)
+Performance Tuning Using Advisors and Manageability Features: AWR, ASH, ADDM and SQL Tuning Advisor (Doc ID 276103.1)
+
+##
+## ADDM:
+##
+
+How to Generate and Check an ADDM report (Doc ID 1680075.1)
+How To Delete ADDM Tasks Manually (Doc ID 1570176.1)
+ADDM and AWR Hangs on DBA_SEGMENTS (Doc ID 2192630.1)
+
+##
+## ASH:
+##
+
+How to Generate an ASH Report (Doc ID 1433973.1)
+
+##
+## SQL Tuning Advisor:
+##
+
+Using the DBMS_SQLTUNE Package to Run the SQL Tuning Advisor (Doc ID 262687.1)
+SQL Tuning Advisor (Doc ID 2582636.1)
+
+##
+## SQLT:
+##
+
+All About the SQLT Diagnostic Tool (Doc ID 215187.1)
+
+##
+## SQL Patch:
+##
+
+How to Find the SQL Text and Hints Stored in SQL Patch (Doc ID 2543795.1)
+How To Create SQL Patch From AWR Repository Without Merging Outline Data Hints Manually (Doc ID 2444753.1)
+How to Create a SQL Patch to add Hints to Application SQL Statements (Doc ID 1931944.1)
+
+##
+## StatsPack:
+##
+
+FAQ- Statspack Complete Reference (Doc ID 94224.1)
+Installing and Configuring StatsPack Package (Doc ID 149113.1)
+Systemwide Tuning Using STATSPACK Reports (Doc ID 228913.1)
+Gathering a StatsPack Snapshot (Doc ID 149121.1)
+
+##
+## Waits:
+##
+
+Troubleshooting 'library cache: mutex X' Waits. (Doc ID 1357946.1)
+Troubleshooting 'cursor: pin S wait on X' waits. (Doc ID 1349387.1)
+Troubleshooting: Understanding and Tuning the Shared Pool (Doc ID 62143.1)
+Resolving Intense and "Random" Buffer Busy Wait Performance Problems (Doc ID 155971.1)
+Understanding and Tuning Buffer Cache and DBWR (Doc ID 62172.1)
+Checkpoint Tuning and Troubleshooting Guide (Doc ID 147468.1)
+Sessions Wait Forever for 'global cache cr request' Wait Event in OPS or RAC (Doc ID 157766.1)
+
+##
+## Trace:
+##
+
+EVENT: 10046 "enable SQL statement tracing (including binds/waits)" (Doc ID 21154.1)
+Interpreting Raw SQL_TRACE output (Doc ID 39817.1)
+AUTOTRACE Option in SQL*Plus (Doc ID 43214.1)
+
+##
+## Others:
+##
+
+How to Determine When an Execution Plan was Produced Using DBA_HIST_SQLPLAN (Doc ID 879677.1)
+Diagnosing and Understanding Why a Query is Not Using an Index (Doc ID 67522.1)
+Handling of equally ranked (RBO) or costed (CBO) indexes (Doc ID 73167.1)
+INITRANS Relationship with DB_BLOCK_SIZE. (Doc ID 151473.1)
+Statistics Gathering: Frequency and Strategy Guidelines (Doc ID 44961.1)
+SRDC - ORA-4031 on Shared Pool: Checklist of Evidence to Supply (Doc ID 1674117.1)
+Information Gathering Script For ORA-4031 Analysis On Shared Pool (Doc ID 1909791.1)
+Master Note for Diagnosing ORA-4031 (Doc ID 1088239.1)

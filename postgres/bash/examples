@@ -1,0 +1,53 @@
+##
+## Test DB:
+##
+
+NOTE: ~ 102 GB Size
+
+pgbench --initialize --scale=7000 --tablespace=bench_db_data --index-tablespace=bench_db_idx --user=bench_usr --host=${HOSTNAME} --port=5432 bench_db
+
+##
+## pg_dump:
+##
+
+Backup:
+-------
+
+pg_dump -Z1 -Fc db_name > /backup/db_name_<date>.dump
+
+Restore:
+--------
+
+pg_restore -j 2 -d db_name /backup/db_name_<date>.dump
+
+##
+## pg_basebackup:
+##
+
+Backup:
+-------
+
+pg_basebackup -h ${HOSTNAME} -p 5432 -U bkp_usr -D /backup/<date> -Ft -z -Xs -P
+
+Restore:
+--------
+
+tar -xzf /pgdata/backup_tests/pg_basebackup/base.tar.gz -C /pgdata/12/data
+tar -xzf /pgdata/backup_tests/pg_basebackup/pg_wal.tar.gz -C /pgdata/12/data/pg_wal
+tar -xzf /pgdata/backup_tests/pg_basebackup/16393.tar.gz -C /pgdata/12/ts/bench_db_data
+tar -xzf /pgdata/backup_tests/pg_basebackup/16394.tar.gz -C /pgdata/12/ts/bench_db_idx
+
+##
+## pg_probackup:
+##
+
+Backup:
+-------
+
+pg_probackup backup --instance=pg_test --threads 4 --backup-mode=FULL --compress --stream -h ${HOSTNAME} -p 5432 -d bkp_db -U bkp_usr
+pg_probackup backup --instance=pg_test --threads 4 --backup-mode=DELTA --compress --stream -h ${HOSTNAME} -p 5432 -d bkp_db -U bkp_usr
+
+Restore:
+--------
+
+pg_probackup restore --instance=pg_test -D $PGDATA --threads 4 --progress --log-level-console=log --log-level-file=verbose --log-filename=pg_probackup_RESTORE.log

@@ -1,0 +1,8 @@
+ORCL,LISTENER_ORCL =
+   (DESCRIPTION =
+        (ADDRESS = (PROTOCOL = TCP)(HOST = srv-ora-db1.oracle.com)(PORT = 1521))
+        (CONNECT_DATA =
+           (SERVER = DEDICATED)
+           (SID = ORCL)
+        )
+   )
