@@ -1,0 +1,27 @@
+psql> create user ro_user with password '***';
+
+psql> alter user ro_user set default_transaction_read_only = 'on';
+
+psql> grant connect on database test_db to ro_user;
+
+psql> \c test_db
+
+psql> \dn
+
+public                | postgres
+
+psql> select * from information_schema.role_table_grants where grantee = ro_user';
+
+psql> grant usage on schema public to ro_user;
+
+psql> grant select on all tables in schema public to ro_user;
+
+psql> alter default privileges in schema public grant select on tables to ro_user;
+
+[!!!!!!!!!] Correct pg_hba.conf [!!!!!!!!!]
+
+view $PGDATA/pg_hba.conf
+
+pg_ctl -D $PGDATA reload
+
+psql> select * from pg_hba_file_rules;
